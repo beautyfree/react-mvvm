@@ -1,6 +1,6 @@
 {
   "name": "react-mvvm",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "An MVVM implementation for React using MobX",
   "author": "Alexey Elizarov <alex.elizarov1@gmail.com>",
   "license": "MIT",
