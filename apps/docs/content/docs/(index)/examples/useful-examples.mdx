@@ -126,6 +126,51 @@ class SomeViewModel extends ViewModel {
 const instance = container.resolve(SomeOuterClass)
 ```
 
+### MobX React Library Configuration
+
+You can choose between `mobx-react` and `mobx-react-lite` using a simple boolean flag. By default, the library uses `mobx-react-lite` (lighter and recommended for most cases). You can also access the configured library directly using the `getMobxReact` function.
+
+```tsx
+import { configure, getMobxReact, view, ViewModel } from 'react-mvvm'
+import { observable, action, makeObservable } from 'mobx'
+
+// Use mobx-react-lite (default, lighter)
+configure({
+  lite: true, // default
+})
+
+// Or use mobx-react (full-featured, includes Provider/Inject)
+configure({
+  lite: false,
+})
+
+// Access the configured library directly
+const mobxReact = getMobxReact()
+const { observer, Provider, inject } = mobxReact
+
+// Example ViewModel
+class CounterViewModel extends ViewModel {
+  @observable count = 0
+
+  constructor() {
+    super()
+    makeObservable(this)
+  }
+
+  @action increment = () => {
+    this.count++
+  }
+}
+
+// The view will automatically use the configured library
+const Counter = view(CounterViewModel)(({ viewModel }) => (
+  <div>
+    <span>Count: {viewModel.count}</span>
+    <button onClick={viewModel.increment}>Increment</button>
+  </div>
+))
+```
+
 ### Using Error Boundary
 
 React applications have a few problems. One of them is error handling. If some of your component throws an error and you don't handle it, all the virtual DOM tree will die. FaceBook recommends to use ErrorBoundary to handle such errors. But it can be inconvenient to use it - you should always think where to use it, and there can be a lot of repeating code of using the same error boundary. But with this package you can add error boundaries to all of your views and childViews, so you don't actually have to think about using it at all.

@@ -130,6 +130,9 @@ h3 {
 
 :root {
   --fd-layout-width: 100vw;
+}
+
+.landing-page {
   --spacing-fd-container: 900px;
 }
 

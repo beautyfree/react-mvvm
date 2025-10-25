@@ -7,11 +7,13 @@ type TConfiguration = {
   Wrapper:
     | FC<{ children: ReactNode }>
     | ComponentClass<{ children: ReactNode }>;
+  lite: boolean;
 };
 
 export const configuration: TConfiguration = {
   vmFactory: (VM) => new VM(),
   Wrapper: Fragment,
+  lite: true,
 };
 
 export const configure = (config: Partial<TConfiguration>) => {

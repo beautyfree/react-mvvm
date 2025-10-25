@@ -12,7 +12,8 @@
       },
       "nursery": {
         "useMaxParams": "warn",
-        "noShadow": "warn"
+        "noShadow": "warn",
+        "noReactForwardRef": "warn"
       },
       "performance": {
         "noBarrelFile": "off"

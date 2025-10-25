@@ -10,7 +10,7 @@ This library can be configured at the global level.
 ## Usage
 
 ```tsx
-configure({ vmFactory, Wrapper })
+configure({ vmFactory, Wrapper, lite })
 ```
 
 #### `vmFactory`
@@ -24,6 +24,12 @@ See configuring vmFactory: [Example](/docs/examples/basic-examples#configuring-v
 A wrapper which is used in `view` and `childView`. By default, `Wrapper` is equal to `React.Fragment`. The wrapper is useful if you want to add an ErrorBoundary or for a debugging purposes.
 
 See configuring the wrapper: [Basic usage](/docs/examples/basic-examples#configuring-wrapper), [Error Boundary](/docs/examples/useful-examples#using-error-boundary).
+
+#### `lite`
+
+A boolean flag that determines which MobX React library to use. By default, `lite` is `true`, which uses `mobx-react-lite` (lighter and recommended for most cases). Set to `false` to use the full `mobx-react` library (includes Provider/Inject functionality).
+
+See MobX React library configuration: [Example](/docs/examples/useful-examples#mobx-react-library-configuration).
 
 ## Usage sample
 
@@ -42,7 +48,7 @@ const CustomWrapper: FC<{ children: ReactElement }> = ({ children }) => {
   )
 }
 
-// [!code focus:8]
+// [!code focus:10]
 configure({
   vmFactory: (VM) => {
     const viewModel = new VM()
@@ -50,5 +56,6 @@ configure({
     return viewModel
   },
   Wrapper: CustomWrapper,
+  lite: true, // Use mobx-react-lite (default)
 })
 ```

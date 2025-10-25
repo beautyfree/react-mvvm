@@ -32,8 +32,17 @@
   },
   "peerDependencies": {
     "mobx": "^4 || ^5 || ^6",
+    "react": "^16 || ^17 || ^18 || ^19",
     "mobx-react": "^6 || ^7",
-    "react": "^16 || ^17 || ^18"
+    "mobx-react-lite": "^3 || ^4"
+  },
+  "peerDependenciesMeta": {
+    "mobx-react": {
+      "optional": true
+    },
+    "mobx-react-lite": {
+      "optional": true
+    }
   },
   "devDependencies": {
     "@biomejs/biome": "^2.2.6",
@@ -42,6 +51,7 @@
     "@testing-library/jest-dom": "5.16.5",
     "@testing-library/react": "13.4.0",
     "@types/jest": "29.5.1",
+    "@types/node": "^24.9.1",
     "@types/react": "18.0.21",
     "@types/react-dom": "18.0.6",
     "@types/react-is": "18.2.0",
@@ -50,6 +60,7 @@
     "jest-environment-jsdom": "29.5.0",
     "mobx": "6.9.0",
     "mobx-react": "7.6.0",
+    "mobx-react-lite": "4.0.5",
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "reflect-metadata": "0.1.13",

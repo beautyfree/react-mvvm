@@ -10,9 +10,15 @@ import { Step, Steps } from 'fumadocs-ui/components/steps'
 
 Run one of the following commands to add React MVVM and all needed libraries:
 
-```package-install
+```package-install tab="mobx-react-lite (recommended)"
+react-mvvm mobx mobx-react-lite reflect-metadata
+```
+
+```package-install tab="mobx-react"
 react-mvvm mobx mobx-react reflect-metadata
 ```
+
+**Note**: By default, React MVVM uses `mobx-react-lite` (lighter and recommended for most cases). You can configure it to use `mobx-react` if you need Provider/Inject functionality. See [Configuration](/docs/core-concepts/configuration) for more details.
 
 ## Preparation
 

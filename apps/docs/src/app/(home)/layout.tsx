@@ -8,6 +8,7 @@ export default function Layout({ children }: LayoutProps<"/">) {
   return (
     <HomeLayout
       {...base}
+      className="landing-page"
       links={[
         ...(links ?? []),
         {

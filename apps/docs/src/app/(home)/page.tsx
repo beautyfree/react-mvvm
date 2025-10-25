@@ -249,7 +249,7 @@ export default function HomePage() {
               <code className="rounded-sm border border-primary/40 px-1">
                 react
               </code>{" "}
-              the available versions are <strong>16, 17 and 18</strong>.
+              the available versions are <strong>16, 17, 18 and 19</strong>.
             </p>
             <p>
               For{" "}
@@ -257,6 +257,14 @@ export default function HomePage() {
                 mobx-react
               </code>{" "}
               the available versions are <strong>6 and 7</strong>.
+            </p>
+            <p>
+              For{" "}
+              <code className="rounded-sm border border-primary/40 px-1">
+                mobx-react-lite
+              </code>{" "}
+              the available versions are <strong>3 and 4</strong> (recommended
+              for most cases).
             </p>
             <p>
               For{" "}
@@ -296,7 +304,7 @@ export default function HomePage() {
               that will accelerate your next project!
             </p>
             <Link
-              className="inline-flex h-10 items-center justify-center rounded-md bg-primary px-4 py-2 font-medium text-primary-foreground text-sm no-underline ring-offset-background transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50"
+              className="inline-flex h-10 items-center justify-center rounded-md bg-primary px-4 py-2 font-medium text-white text-sm no-underline ring-offset-background transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50"
               href="/docs/getting-started"
             >
               Start Building
