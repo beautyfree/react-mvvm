@@ -118,7 +118,7 @@ export default function HomePage() {
         {/* Hero Section */}
         <div className="relative px-4 pt-16 text-center">
           <div className="absolute inset-0 z-[-1]">
-            <Gradient currentId={0} />
+            <Gradient currentId={1} />
           </div>
           <Image
             alt="React MVVM - Modern MVVM architecture for React applications"
@@ -304,7 +304,7 @@ export default function HomePage() {
               that will accelerate your next project!
             </p>
             <Link
-              className="inline-flex h-10 items-center justify-center rounded-md bg-primary px-4 py-2 font-medium text-white text-sm no-underline ring-offset-background transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50"
+              className="inline-flex h-10 items-center justify-center rounded-md bg-primary px-8 py-6 font-medium text-orange-950 text-base no-underline ring-offset-background transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50"
               href="/docs/getting-started"
             >
               Start Building
