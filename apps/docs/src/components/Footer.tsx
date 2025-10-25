@@ -23,7 +23,7 @@ export function Footer() {
               target="_blank"
             >
               <Package className="h-4 w-4" />
-              <span>NPM Package</span>
+              <span>NPM</span>
             </Link>
           </div>
           <div className="flex flex-col items-start space-y-1">

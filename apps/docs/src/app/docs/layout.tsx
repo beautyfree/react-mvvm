@@ -7,14 +7,16 @@ export default function Layout({ children }: LayoutProps<"/docs">) {
   const { nav, ...base } = baseOptions();
 
   return (
-    <DocsLayout
-      {...base}
-      nav={{ ...nav, mode: "top" }}
-      tabMode="navbar"
-      tree={source.pageTree}
-    >
-      {children}
+    <>
+      <DocsLayout
+        {...base}
+        nav={{ ...nav, mode: "top" }}
+        tabMode="navbar"
+        tree={source.pageTree}
+      >
+        {children}
+      </DocsLayout>
       <Footer />
-    </DocsLayout>
+    </>
   );
 }
