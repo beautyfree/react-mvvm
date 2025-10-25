@@ -1,7 +1,10 @@
 import type { BaseLayoutProps } from "fumadocs-ui/layouts/shared";
 import { Package } from "lucide-react";
+// import Title from "@/components/Title";
+import dynamic from "next/dynamic";
 import { ThemeToggle } from "@/components/layout/theme-toggle";
-import { Title } from "@/components/Title";
+
+const Title = dynamic(() => import("@/components/Title"));
 
 export function baseOptions(): BaseLayoutProps {
   return {
