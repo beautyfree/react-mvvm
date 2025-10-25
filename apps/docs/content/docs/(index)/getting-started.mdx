@@ -1,0 +1,74 @@
+---
+title: Getting Started
+description: Installation and setup guide for React MVVM
+---
+
+import { Tab, Tabs } from 'fumadocs-ui/components/tabs'
+import { Step, Steps } from 'fumadocs-ui/components/steps'
+
+## Installation
+
+Run one of the following commands to add React MVVM and all needed libraries:
+
+<Tabs items={['npm', 'yarn', 'pnpm']}>
+  <Tab value="npm">
+    ```bash npm install react-mvvm mobx mobx-react reflect-metadata ```
+  </Tab>
+  <Tab value="yarn">
+    ```bash yarn add react-mvvm mobx mobx-react reflect-metadata ```
+  </Tab>
+  <Tab value="pnpm">
+    ```bash pnpm add react-mvvm mobx mobx-react reflect-metadata ```
+  </Tab>
+</Tabs>
+
+## Preparation
+
+You must import `reflect-metadata` in your main script file so that you can use the decorators. You can also configure this package, but this step is optional.
+
+<Steps>
+  <Step>
+    Import reflect-metadata in your main entry file:
+
+    ```typescript
+    import 'reflect-metadata';
+    import { configure } from 'react-mvvm';
+    import { createRoot } from 'react-dom/client';
+
+    // Optional step
+    configure({
+      // Configuration options
+    });
+
+    createRoot(document.getElementById('root')!).render(<App />);
+    ```
+
+  </Step>
+
+  <Step>
+    You can use `mobx` with versions **4, 5 or 6**. And it's recommended to use the 6th one.
+
+    In case you want to use versions 4 or 5 you should add the following code to your webpack configuration:
+
+    ```javascript
+    module.exports = {
+      // ...
+      ignoreWarnings: [
+        {
+          module: /react-mvvm/,
+        },
+      ],
+      // ...
+    };
+    ```
+
+  </Step>
+</Steps>
+
+## Usage
+
+You can find examples of using this package in [the examples section](/examples).
+
+## Further reading
+
+Despite the fact that React MVVM is an extremely small library, it can greatly affect the development process. For a better understanding of the beauty of this library, we advise you to read an [article about MobX and MVVM](https://dev.to/yoskutik/mobx-with-mvvm-makes-frontend-developers-life-much-more-easier-than-redux-does-547j).

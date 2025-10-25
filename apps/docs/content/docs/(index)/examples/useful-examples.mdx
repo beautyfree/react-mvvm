@@ -1,0 +1,152 @@
+---
+title: Useful Examples
+description: Useful examples and patterns for React MVVM development
+---
+
+## Useful Examples
+
+This section contains some tricks that can simplify you development process.
+
+### Automatic `makeObservable`
+
+If you sure that most case your view models will contain observable fields you can make calling `makeObservable` automatic, so you don't need to call it for each ViewModel separately. But be aware, if you use this code, you should create your reactions in the `onViewMounted` hook instead of constructor due to the fact that view model will not be observable in it.
+
+```typescript
+import { makeObservable, observable } from 'mobx'
+import { configure, ViewModel } from 'react-mvvm'
+
+configure({
+  vmFactory: (VM) => {
+    const viewModel = new VM()
+    makeObservable(viewModel)
+    return viewModel
+  },
+})
+
+class SomeViewModel extends ViewModel {
+  @observable field1 = 0
+
+  protected onViewMounted() {
+    // In case you make view models observable in a vmFactory, and you want to create reactions,
+    // you should do it in the hook
+    this.reaction(
+      () => this.field1,
+      () => {
+        // do something
+      }
+    )
+  }
+}
+```
+
+### Enabling DI pattern
+
+I really like the DI pattern. And I highly recommend you to use this pattern if you application is big. This pattern can have a big impact on the ability to scale your application. With the DI you can create common MobX stores for whole application. Such Redux does, but with DI + MobX these stores can be logically separated, can contain methods and can be easily used at any part of your code, including both views and view models.
+
+```typescript
+import { computed, makeObservable, observable } from 'mobx'
+// It's not necessary to use tsyringe. You can use any library actually
+import { injectable, container, singleton } from 'tsyringe'
+import { configure, ViewModel } from 'react-mvvm'
+
+configure({
+  vmFactory: (VM) => container.resolve(VM),
+})
+
+// This is an example of common store for the whole application
+@singleton()
+class SomeOuterClass {
+  @observable field1 = 0
+
+  @observable field2 = 'field2'
+
+  constructor() {
+    makeObservable(this)
+  }
+
+  doSomething = () => {
+    // do something
+  }
+}
+
+// It can also be any singleton or transient class, containing observable fields is not necessary
+@injectable()
+class SomeOuterClass2 {
+  @observable field1 = 0
+
+  @observable field2 = 'field2'
+
+  constructor(private someOuterClass: SomeOuterClass) {
+    makeObservable(this)
+  }
+
+  doSomething = () => {
+    // do something
+  }
+}
+
+@injectable()
+class SomeViewModel extends ViewModel {
+  @computed get someGetter() {
+    return this.someOuterClass.field1
+  }
+
+  // And now every ViewModel can access the class via constructor
+  constructor(
+    private someOuterClass: SomeOuterClass,
+    private someOuterClass2: SomeOuterClass2
+  ) {
+    super()
+    makeObservable(this)
+  }
+
+  viewModelFunction = () => {
+    this.someOuterClass.doSomething()
+  }
+}
+
+// You can also get an instance of singleton class in the any place of your code
+const instance = container.resolve(SomeOuterClass)
+```
+
+### Using Error Boundary
+
+React applications have a few problems. One of them is error handling. If some of your component throws an error and you don't handle it, all the virtual DOM tree will die. FaceBook recommends to use ErrorBoundary to handle such errors. But it can be inconvenient to use it - you should always think where to use it, and there can be a lot of repeating code of using the same error boundary. But with this package you can add error boundaries to all of your views and childViews, so you don't actually have to think about using it at all.
+
+```typescript
+import { Component, ReactElement } from 'react'
+import { configure } from 'react-mvvm'
+
+class ErrorBoundary extends Component<
+  { children: ReactElement },
+  { hasError: boolean }
+> {
+  static getDerivedStateFromError() {
+    return { hasError: true }
+  }
+
+  state = {
+    hasError: false,
+  }
+
+  componentDidCatch(error: Error) {
+    // I recommend you to log the error to avoid situations where your content is disappeared,
+    // and you don't know the reason
+    console.error(error)
+  }
+
+  render() {
+    return !this.state.hasError && this.props.children
+  }
+}
+
+configure({
+  // That's it. And now if one of your components throws an error it will just disappear. At it
+  // will be the only component that disappeared.
+  Wrapper: ErrorBoundary,
+})
+```
+
+## Complex Examples
+
+And here's some complex examples of whole React applications with React MVVM. You can find them here [Github](https://github.com/beautyfree/react-mvvm/tree/master/examples).

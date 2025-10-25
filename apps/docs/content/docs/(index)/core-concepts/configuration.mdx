@@ -1,0 +1,52 @@
+---
+title: Configuration
+description: Understanding global configuration for React MVVM
+---
+
+## Overview
+
+This library can be configured at the global level.
+
+## Usage
+
+```typescript
+configure({ vmFactory, Wrapper })
+```
+
+#### `vmFactory`
+
+This function tells the view how to create an instance of a view model. By default, all view models are simply creating with a `new` keyword.
+
+See configuring vmFactory: [Example](/docs/examples/basic-examples#configuring-vmfactory).
+
+#### `Wrapper`
+
+A wrapper which is used in `view` and `childView`. By default, `Wrapper` is equal to `React.Fragment`. The wrapper is useful if you want to add an ErrorBoundary or for a debugging purposes.
+
+See configuring the wrapper: [Basic usage](/docs/examples/basic-examples#configuring-wrapper), [Error Boundary](/docs/examples/useful-examples#using-error-boundary).
+
+## Usage sample
+
+```typescript
+import { FC, ReactElement } from 'react'
+import { configure } from 'react-mvvm'
+
+const CustomWrapper: FC<{ children: ReactElement }> = ({ children }) => {
+  // do anything you want
+  return (
+    <div>
+      You can also add JSX
+      {children}
+    </div>
+  )
+}
+
+configure({
+  vmFactory: (VM) => {
+    const viewModel = new VM()
+    // do anything you want
+    return viewModel
+  },
+  Wrapper: CustomWrapper,
+})
+```

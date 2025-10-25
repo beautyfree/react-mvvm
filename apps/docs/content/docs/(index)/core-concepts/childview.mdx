@@ -1,0 +1,82 @@
+---
+title: ChildView
+description: Understanding the childView function and its usage
+---
+
+import { Tabs, Tab } from 'fumadocs-ui/components/tabs'
+
+## Overview
+
+As the `view`, the `childView` function creates an object that also implements the view logic from the MVVM pattern. But there's a big difference in these functions - ChildView does not call `vmFactory` and uses a view's view model as own one.
+
+By default, every child view is an observer and is memoized. And you can change it. The options of creating view child is same as for view.
+
+## Usage
+
+```typescript
+childView()(Component[, options])
+```
+
+See using ChildView: [Example](/docs/examples/basic-examples#using-childview).
+
+### Options
+
+See setting options: [Example](/docs/examples/basic-examples#setting-options).
+
+## Usage Example
+
+```typescript
+import React from 'react'
+import { childView } from 'react-mvvm'
+import type { SomeViewModel } from './path-to-view-model'
+
+export type Props = {
+  prop1: number
+  prop2?: string
+}
+
+export const SomeChildView = childView<SomeViewModel>()<Props>(
+  ({ viewModel, prop1, prop2 }) => (
+    <div>
+      {viewModel.field1}
+      {prop1}
+      {prop2}
+    </div>
+  )
+)
+```
+
+---
+
+## ChildViewComponent
+
+We highly recommend using React MVVM with functional style components. But to increase compatibility, we added a class `ChildViewComponent`, so you can create instances of ChildView as class components.
+
+<Callout type="info">
+  If you want to create an instance of View as class component, please see the
+  [example](/docs/examples/basic-examples#using-class-components).
+</Callout>
+
+The only difference between class-style ChildView and functional-style ChildView is that in the class-style `viewModel` field is part of class, while in the function-style it's a property. And since functional-style child views are declared with `memo`, `ChildViewComponent` is extended from `PureComponent`.
+
+### Usage Example
+
+```typescript
+import React from 'react'
+import { ChildViewComponent } from 'react-mvvm'
+import { SomeViewModel } from './path-to-view-model'
+
+export type Props = {
+  prop1: number
+  prop2?: string
+}
+
+class SomeChildView extends ChildViewComponent<SomeViewModel, Props> {
+  render() {
+    return (
+      // viewModel is a class member, not a property of the component
+      <div>{this.viewModel.field1}</div>
+    )
+  }
+}
+```

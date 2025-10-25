@@ -1,0 +1,66 @@
+name: Build
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+    branches: [master]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [16.x]
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v2
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'pnpm'
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: 10.14.0
+
+      - name: Install
+        run: pnpm install
+
+      - name: Build 🔧
+        run: pnpm build
+
+      - name: Deploy documentation 🚀
+        uses: JamesIves/github-pages-deploy-action@v4
+        with:
+          folder: packages/docs/build
+        if: github.event_name != 'pull_request'
+
+      - name: Linting
+        run: pnpm lint
+
+      - name: Running unit tests
+        run: pnpm jest --coverage
+
+      - name: Setting upsteam
+        run: git push --set-upstream origin master
+        if: github.event_name != 'pull_request'
+
+      - name: Generating coverage badges
+        uses: jpb06/jest-badges-action@latest
+        with:
+          coverage-summary-path: packages/react-mvvm/coverage/coverage-summary.json
+          branches: master,preprod,staging
+        if: github.event_name != 'pull_request'
+
+      - name: Generating the size badge
+        run: |
+          node .github/scripts/size-badge.js
+          git add badges/weight.svg
+          git commit -m "Generating the size badge"
+          git push
+        if: github.event_name != 'pull_request'
