@@ -1,0 +1,30 @@
+{
+  "$schema": "./node_modules/@biomejs/biome/configuration_schema.json",
+  "extends": ["ultracite/core", "ultracite/next", "ultracite/react"],
+  "files": {
+    "includes": ["!**/tests"]
+  },
+  "linter": {
+    "rules": {
+      "suspicious": {
+        "noExplicitAny": "warn",
+        "noAssignInExpressions": "warn"
+      },
+      "nursery": {
+        "useMaxParams": "warn",
+        "noShadow": "warn"
+      },
+      "performance": {
+        "noBarrelFile": "off"
+      },
+      "correctness": {
+        "noSelfAssign": "warn"
+      },
+      "style": {
+        "useFilenamingConvention": "warn",
+        "noParameterAssign": "warn",
+        "useReactFunctionComponents": "off"
+      }
+    }
+  }
+}

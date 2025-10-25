@@ -1,0 +1,5 @@
+{
+  "title": "Core Concepts",
+  "pages": ["view", "childview", "viewmodel", "configuration"],
+  "defaultOpen": true
+}

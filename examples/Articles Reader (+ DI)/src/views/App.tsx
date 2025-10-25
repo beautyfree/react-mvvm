@@ -1,0 +1,42 @@
+import { HBox, ToastsContainer } from "@components";
+import type { ArticleTitleGenerator, TArticle } from "@services";
+import { action, observable } from "mobx";
+import { ViewModel, view } from "react-mvvm";
+import { injectable } from "tsyringe";
+import { Articles } from "./Articles";
+import { Statistics } from "./Statistics";
+import "../Style.scss";
+
+/**
+ * Every ViewModel is supposed to be a transient class.
+ */
+@injectable()
+export class AppViewModel extends ViewModel {
+  @observable.shallow readonly data: TArticle[] = Array(20)
+    .fill(null)
+    .map(() => ({
+      id: Math.random().toString(),
+      title: this.articleTitleGenerator.make(),
+    }));
+
+  // This class is injected automatically by container.resolved, that is called in the view function
+  // It is injected by class
+  constructor(private articleTitleGenerator: ArticleTitleGenerator) {
+    super();
+  }
+
+  @action createExtraArticle = () => {
+    this.data.push({
+      id: Math.random().toString(),
+      title: this.articleTitleGenerator.make(),
+    });
+  };
+}
+
+export const App = view(AppViewModel)(() => (
+  <HBox>
+    <Articles />
+    <Statistics />
+    <ToastsContainer />
+  </HBox>
+));

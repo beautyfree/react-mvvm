@@ -1,0 +1,12 @@
+{
+  "title": "Documentation",
+  "root": true,
+  "pages": [
+    "---Documentation---",
+    "getting-started",
+    "core-concepts",
+    "examples",
+    "---LLM---",
+    "[llms-full.txt](/llms-full.txt)"
+  ]
+}

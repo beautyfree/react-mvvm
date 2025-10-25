@@ -1,0 +1,62 @@
+---
+title: Changelog
+description: New updates and improvements
+icon: History
+---
+
+<Updates>
+  <Update label="1.1.3 - 2022-11-15">
+    ### Changed [!toc]
+
+    * Fields `parent` and `viewProps` now are not `undefined` during the first view render.
+
+  </Update>
+
+  <Update label="1.2.0 - 2022-12-26">
+    ### Changed [!toc]
+
+    * Fields `parent` and `viewProps` now are not `undefined` in the constructor of view model;
+    * Due to the fact above `parent` is no more observable;
+    * Field `parent` now can be typed as `null` in case there's no parent view model;
+    * Returned functions of `view` and `childView` now have 2 generics - for typing props and
+    * forwarded ref. Now, it is better to use these generics rather explicitly typing props via `FC`:
+    ```tsx
+    // Before
+    const View: FC<Props> = view(SomeViewModel)(() => (
+      <div />
+    ));
+    
+    // After
+    const View = view(SomeViewModel)<Props>(() => (
+      <div />
+    ));
+    ```
+    * The README file is now consist of a minimal example. The documentation can be found on the
+    * [website](https://beautyfree.github.io/react-mvvm/).
+
+    ### Removed [!toc]
+
+    * Type `ViewWithRef` was removed. To type forwarded ref of view or child view you can now use
+    * the second generic of these functions:
+    ```tsx
+    // Before
+    const View: ViewWithRef<HTMLDivElement, Props> = view(SomeViewModel)(() => (
+      forwardRef(() => <div />)
+    ));
+    
+    // After
+    const View = view(SomeViewModel)<Props, HTMLDivElement>(() => (
+      forwardRef(() => <div />)
+    ));
+    ```
+    * Removed an idle render of view components for initializing `parent` and `viewProps` fields.
+
+  </Update>
+
+  <Update label="1.2.1 - 2023-01-08">
+    ### Changed [!toc]
+
+    * The size of the packages was reduces from 1.8Kb to 1.6Kb
+
+  </Update>
+</Updates>

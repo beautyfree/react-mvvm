@@ -1,0 +1,120 @@
+---
+title: ViewModel
+description: Understanding the ViewModel class and its lifecycle
+---
+
+import { Cards, Card } from 'fumadocs-ui/components/card'
+
+## Overview
+
+The `ViewModel` class is an object that implements the view model logic from the MVVM pattern. In general case, the `ViewModel` is designed to store observable fields, as well as logic for updating them.
+
+The `ViewModel` stores a reference to the props object with which the view was rendered with and also a reference to the parent view model. Also, `ViewModel` has a few view's lifecycle methods.
+
+## What is `parent` for a ViewModel?
+
+The assignment of the parent view model occurs according to the virtual DOM tree. If `View2` is located somewhere inside `View1`, then `ViewModel1` will be considered the parent of `ViewModel2`.
+
+## Properties
+
+#### `@observable.ref readonly parent`
+
+A link to a parent view model.
+
+See typing and using parent view model: [Example](/docs/examples/basic-examples#typing-parent-and-viewprops).
+
+#### `@observable.ref readonly viewProps`
+
+A link to a props the view has rendered with. Every time the view is renders it updates this field. Every view is memoized, and this mean that this object will be updated only if at least 1 property has been changed.
+
+<Callout type="warn">
+  Be careful observing `viewProps`. If some of yours observer components or
+  reactions are using `viewProps`, they might update every time any prop has
+  changed, even if the updated prop is not used directly. For better
+  understanding of how you should observe the props, please, see the example.
+</Callout>
+
+See typing, using and observing viewProps: [Example](/docs/examples/basic-examples#observing-viewprops).
+
+## Methods
+
+### Lifecycle Methods
+
+#### `protected onViewMounted?()`
+
+A hook which is called after the view becomes mounted. The function is called in the `useEffect` hook.
+
+#### `protected onViewUpdated?()`
+
+A hook which is called after the view is rendered besides the first render. This function is called in the `useEffect` hook.
+
+#### `protected onViewUnmounted?()`
+
+A hook which is called after the view becomes unmounted. The function is called in the `useEffect` hook.
+
+#### `protected onViewMountedSync?()`
+
+A hook which is called after the view becomes mounted. The function is called in the `useLayoutEffect` hook.
+
+#### `protected onViewUpdatedSync?()`
+
+A hook which is called after the view is rendered besides the first render. This function is called in the `useLayoutEffect` hook.
+
+#### `protected onViewUnmountedSync?()`
+
+A hook which is called after the view becomes unmounted. The function is called in the `useLayoutEffect` hook.
+
+See using view hooks: [Example](/docs/examples/basic-examples#view-lifecycle-hooks).
+
+### Reactions and Disposers
+
+#### `protected autorun(...args)`
+
+An add-on function for an `autorun` from MobX. When view becomes unmounted, the disposer of this function will be called automatically.
+
+#### `protected reaction(...args)`
+
+An add-on function for a `reaction` from MobX. When view becomes unmounted, the disposer of this function will be called automatically.
+
+#### `protected addDisposer(disposer)`
+
+A function which adds a disposer that will be called after the view becomes unmounted.
+
+<Callout type="warn">
+  MobX states that **you should always dispose of reactions**. This is why
+  `autorun`, `reaction` and `addDisposer` were added to a `ViewModel`. So,
+  please, use it every time you want to create reactions *inside a view model*.
+  Otherwise, you can create a memory leak.
+</Callout>
+
+See observing: [Example](/docs/examples/basic-examples#creating-reactions).
+
+## Usage Example
+
+```tsx
+// [!code focus]
+import { ViewModel } from 'react-mvvm'
+import { action, observable, makeObservable } from 'mobx'
+import type { ParentViewModel } from '../path-to-parent-view-model'
+import type { Props } from './path-to-view'
+
+// [!code focus]
+export class SomeViewModel extends ViewModel<ParentViewModel, Props> {
+  @observable field1 = 0
+  @observable field2 = 'field'
+
+  constructor() {
+    super()
+    makeObservable(this)
+  }
+
+  // [!code focus]
+  protected onViewMounted() {
+    // do something
+  }
+
+  @action doSomething = () => {
+    // do something
+  }
+}
+```

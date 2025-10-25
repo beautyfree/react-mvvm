@@ -1,0 +1,24 @@
+{
+  "compilerOptions": {
+    "module": "esnext",
+    "target": "es2015",
+    "lib": ["dom", "es2018"],
+    "jsx": "react-jsx",
+    "moduleResolution": "node",
+    "allowSyntheticDefaultImports": true,
+    "resolveJsonModule": true,
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
+    "removeComments": false,
+    "esModuleInterop": true,
+    "downlevelIteration": true,
+    "strict": true,
+    "baseUrl": "./",
+    "skipLibCheck": true,
+    "paths": {
+      "react-mvvm": ["./"]
+    }
+  },
+  "include": ["src", "metadata.d.ts"],
+  "exclude": ["node_modules", "dist"]
+}

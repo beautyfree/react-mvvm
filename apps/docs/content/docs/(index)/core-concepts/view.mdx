@@ -1,0 +1,62 @@
+---
+title: View
+description: Understanding the view function and its usage
+---
+
+import { Tabs, Tab } from 'fumadocs-ui/components/tabs'
+
+## Overview
+
+The `view` function creates an object that implements the view logic from the MVVM pattern. This means that view should be responsible for displaying a component in your application.
+
+A view takes a `vmFactory` from the `configuration` and call it to create an instance of a view model. Also view is responsible for updating view model's fields `parent` and `viewProps` and for calling view's lifecycle hooks in the instance of a view model.
+
+By default, every view is an observer. But you can configure it.
+
+<Callout>
+  One of the issues that solves this package is the purity of the code. The
+  fewer props your components have, the easier it will be to understand your
+  code for others. And with this package you can minimize amount of props passed
+  by observing view model's fields, its parent's fields and so on. For example,
+  a ChildView can observe its View props.
+</Callout>
+
+**Every view is memoized**. And as it states below, the fewer props your view having, the faster your application will work. Since the view uses `memo` function, you can also pass the `propsAreEqual` function to it.
+
+## Usage
+
+```tsx
+view(SomeViewModel)(Component[, options])
+```
+
+### Options
+
+There are two options: `observer` and `propsAreEqual`. If `observer` is `false`, when view will be created as non-observer component. And if `propsAreEqual` is set, it will be passed to a `memo` function (See [how memo works](https://reactjs.org/docs/react-api.html#reactmemo) for better understanding).
+
+See setting view options: [Example](/docs/examples/basic-examples#setting-options).
+
+## Usage Example
+
+```tsx
+import React from 'react'
+import { view } from 'react-mvvm' // [!code focus]
+import { SomeViewModel } from './path-to-view-model'
+
+export type Props = {
+  prop1: number
+  prop2?: string
+}
+
+// [!code focus]
+export const SomeView = view(SomeViewModel)<Props>(
+  (
+    { viewModel, prop1, prop2 } // [!code focus]
+  ) => (
+    <div>
+      {viewModel.field1} // [!code focus]
+      {prop1}
+      {prop2}
+    </div>
+  )
+)
+```

@@ -1,0 +1,519 @@
+---
+title: Basic Examples
+description: Practical examples and useful patterns for React MVVM
+---
+
+import { Cards, Card } from 'fumadocs-ui/components/card'
+import { Tabs, Tab } from 'fumadocs-ui/components/tabs'
+
+## Basic Examples
+
+This section contains examples of basic usage of entities with all possible typings and variants.
+
+<Cards>
+  <Card title="View and ChildView" href="#view-and-childview">
+    Learn how to create and configure views and child views
+  </Card>
+  <Card title="ViewModel" href="#viewmodel">
+    Understand ViewModel lifecycle, reactions, and parent-child relationships
+  </Card>
+  <Card title="Configuration" href="#configuration">
+    Configure ViewModel factories and wrappers globally
+  </Card>
+</Cards>
+
+## View and ChildView
+
+The interfaces of `view` and `childView` are pretty much the same. The only difference - the way the view model is typed.
+
+### Using `childView`
+
+The component which was created with `childView` must be used somewhere inside a view of the same view model.
+
+```tsx
+import React from 'react'
+// [!code focus]
+import { view, childView } from 'react-mvvm'
+import { SomeViewModel } from './path-to-view-model'
+
+// [!code focus]
+export const ChildView = childView<SomeViewModel>()(({ viewModel }) => <div />)
+
+// [!code focus:3]
+// ChildView does not create a view model and should be located somewhere inside a view.
+// Thus, it can use view's view model.
+export const View1 = view(SomeViewModel)(({ viewModel }) => <ChildView />)
+
+// [!code focus:2]
+// It doesn't have to be the direct child
+export const View2 = view(SomeViewModel)(({ viewModel }) => (
+  <div>
+    // [!code focus]
+    <ChildView />
+  </div>
+))
+```
+
+### Typing props
+
+By default, `view` and `childView` returns an `FC` component with no props. But you can type it using `FC` type.
+
+```tsx
+import React from 'react'
+// [!code focus]
+import { view, childView } from 'react-mvvm'
+import { SomeViewModel } from './path-to-view-model'
+
+// [!code focus:3]
+// View1 and ChildView1 don't have any props
+export const View1 = view(SomeViewModel)(({ viewModel }) => <div />)
+export const ChildView1 = childView<SomeViewModel>()(({ viewModel }) => <div />)
+
+// [!code focus:4]
+export type Props = {
+  prop1: number // A required prop
+  prop2?: string // An optional prop
+}
+
+// [!code focus:3]
+export const View2 = view(SomeViewModel)<Props>(
+  ({ viewModel, prop1, prop2 }) => <div />
+)
+
+// [!code focus:3]
+export const ChildView = childView<SomeViewModel>()<Props>(
+  ({ viewModel, prop1, prop2 }) => <div />
+)
+
+// [!code focus:3]
+// And now you can pass the props
+// <View2 prop1={2} prop2="prop2" />
+// <ChildView2 prop1={2} prop2="prop2" />
+```
+
+### Setting options
+
+By default, `view` and `childView` create a memoized observer component. You can make it non-observer or pass `propsAreEqual` function to the `memo` HOC.
+
+```tsx
+import React from 'react'
+// [!code focus]
+import { view, childView } from 'react-mvvm'
+import { SomeViewModel } from './path-to-view-model'
+
+// [!code focus:3]
+// View1 and ChildView1 are observers and they are memoized
+export const View1 = view(SomeViewModel)(({ viewModel }) => <div />)
+export const ChildView1 = childView<SomeViewModel>()(({ viewModel }) => <div />)
+
+// [!code focus:4]
+// View2 and ChildView2 are not observers now, but they still memoized with default behaviour
+export const View2 = view(SomeViewModel)(({ viewModel }) => <div />, {
+  observer: false,
+})
+// [!code focus]
+export const ChildView2 = childView<SomeViewModel>()(
+  ({ viewModel }) => <div />,
+  // [!code focus]
+  { observer: false }
+)
+
+type Props = {
+  prop1: number
+}
+
+// [!code focus:3]
+const propsAreEqual = (prevProps: Props, nextProps: Props) => {
+  // logic here
+}
+
+// [!code focus:4]
+// And this is how you can change propsAreEqual function for the memo
+export const View3 = view(SomeViewModel)<Props>(({ viewModel }) => <div />, {
+  propsAreEqual,
+})
+// [!code focus]
+export const ChildView3 = childView<SomeViewModel>()<Props>(
+  ({ viewModel }) => <div />,
+  // [!code focus]
+  { propsAreEqual }
+)
+```
+
+### Using `forwardRef`
+
+Of course, there's an opportunity to pass a ref via `view` and `childView`. You just need to apply `forwardRef` before applying these functions. Also, if you want to type the component, you have to use second generic.
+
+```tsx
+import React, { forwardRef } from 'react'
+// [!code focus]
+import { view, childView } from 'react-mvvm'
+import { SomeViewModel } from './path-to-view-model'
+
+// [!code focus:4]
+// Only ref with no props
+export const View1 = view(SomeViewModel)<unknown, HTMLDivElement>(
+  forwardRef(({ viewModel }, ref) => <div ref={ref} />)
+)
+
+// [!code focus:3]
+export const ChildView1 = childView<SomeViewModel>()<unknown, HTMLDivElement>(
+  forwardRef(({ viewModel }, ref) => <div ref={ref} />)
+)
+
+type Props = {
+  prop1: number
+}
+
+// [!code focus:4]
+// With props
+export const View2 = view(SomeViewModel)<Props, HTMLDivElement>(
+  forwardRef(({ viewModel, prop1 }, ref) => <div ref={ref} />)
+)
+
+// [!code focus:3]
+export const ChildView2 = childView<SomeViewModel>()<Props, HTMLDivElement>(
+  forwardRef(({ viewModel, prop1 }, ref) => <div ref={ref} />)
+)
+```
+
+### Using class components
+
+We do not recommend writing new code with class-style components. However, we give you the opportunity to use the MVVM pattern for class components as well. A class component can't be a view, only a ChildView. However, you can additionally use the `view` function to wrap your ChildView to make it act as view.
+
+```tsx
+// [!code focus]
+import { ChildViewComponent, view } from 'react-mvvm'
+import { SomeViewModel } from './SomeViewModel'
+
+type Props = {
+  prop1: number
+}
+
+// [!code focus:2]
+// This is a child view. It should be used somewhere inside a view with SomeViewModel view model
+export class SomeChildView extends ChildViewComponent<SomeViewModel, Props> {
+  render() {
+    // [!code focus]
+    return <div>{this.viewModel.field}</div>
+  }
+}
+
+// [!code focus:3]
+// But if you want to make it act as view, you can wrap it with the view function
+export default view(SomeViewModel)<Props>((props) => (
+  <SomeChildView {...props} />
+))
+```
+
+## ViewModel
+
+### Typing `parent` and `viewProps`
+
+View models have link to their parents and also have link to view's props. And you can type both of these fields.
+
+```tsx
+// [!code focus]
+import { ViewModel } from 'react-mvvm'
+import type { ParentViewModel } from './ParentViewModel'
+import type { Props } from './path-to-view-props'
+
+// [!code focus:2]
+// No typings. parent is unknown, viewProps is unknown
+export class SomeViewModel1 extends ViewModel {}
+
+// [!code focus:2]
+// Parent is ParentViewModel, viewProps is unknown
+export class SomeViewModel2 extends ViewModel<ParentViewModel> {}
+
+// [!code focus:2]
+// Parent is ParentViewModel, viewProps is Props
+export class SomeViewModel3 extends ViewModel<ParentViewModel, Props> {}
+
+// [!code focus:2]
+// Parent is unknown, viewProps is Props
+export class SomeViewModel4 extends ViewModel<unknown, Props> {}
+```
+
+### Using `parent`
+
+If a view is located somewhere inside another view, inner view can use outer one's view model.
+
+```tsx
+// [!code focus]
+import { view, ViewModel } from 'react-mvvm'
+
+// [!code focus:2]
+class ViewModel1 extends ViewModel {
+  doSomething = () => {}
+}
+
+// [!code focus:5]
+class ViewModel2 extends ViewModel<ViewModel1> {
+  onClick = () => {
+    this.parent.doSomething()
+  }
+}
+
+// [!code focus:5]
+// View2 must be located somewhere inside View1. Thus, view model of View1 will be a parent view model for View2
+const View2 = view(ViewModel2)(({ viewModel }) => (
+  <button onClick={viewModel.onClick} />
+))
+
+// [!code focus]
+const View1 = view(ViewModel1)(({ viewModel }) => (
+  <div>
+    // [!code focus]
+    <View2 />
+  </div>
+))
+```
+
+### Observing `viewProps`
+
+The `viewProps` field updates every time the view is rendered with new props. The view is memoized, so the amount of updates is minimized. But you need to keep in mind a few rules when you want to observe `viewProps`. If you are using `viewProps` inside an `autorun` or an observer component (`observer`, `view` or `childView`), when the reaction will be called every time the view is rendered with new props.
+
+```tsx
+import { computed, makeObservable } from 'mobx'
+// [!code focus]
+import { view, childView, ViewModel } from 'react-mvvm'
+
+type Props = {
+  prop1: number
+  prop2: string
+}
+
+// [!code focus]
+export class SomeViewModel extends ViewModel<unknown, Props> {
+  // [!code focus:3]
+  @computed get prop1() {
+    return this.viewProps.prop1
+  }
+
+  constructor() {
+    super()
+    makeObservable(this)
+
+    // [!code focus:4]
+    // This autorun will be called every time the view gets any new prop, even if the prop1 didn't change
+    this.autorun(() => {
+      console.log(this.viewProps.prop1)
+    })
+
+    // [!code focus:7]
+    // This reaction will be called only if the prop has changed
+    this.reaction(
+      () => this.viewProps.prop1,
+      () => {
+        console.log(this.viewProps.prop1)
+      }
+    )
+
+    // [!code focus:4]
+    // This autorun will be called only if the prop has changed
+    this.autorun(() => {
+      console.log(this.prop1)
+    })
+  }
+}
+
+// [!code focus]
+const SomeChildView = childView<SomeViewModel>()(({ viewModel }) => (
+  <div>
+    // [!code focus:2]
+    {/* If you use the line below, SomeChildView will be re-rendered every time SomeView get any new prop */}
+    {viewModel.viewProps.prop1}
+
+    // [!code focus:2]
+    {/* If you use the line below, SomeChildView will be re-rendered only if prop1 was changed */}
+    {viewModel.prop1}
+  </div>
+))
+
+// [!code focus]
+const SomeView = view(SomeViewModel)<Props>(() => <SomeChildView />)
+```
+
+### View lifecycle hooks
+
+You add handle some of the view lifecycle state changes, such as mounting, unmounting and updating. There are 3 methods for each hook in the `ViewModel`.
+
+```tsx
+import { ViewModel } from 'react-mvvm'
+
+// Hooks can be sync and async. Also, they can be decorated with @action or other decorators
+export class SomeViewModel extends ViewModel {
+  protected onViewMounted() {
+    console.log(
+      'View has been mounted. This function is called in the useEffect hook'
+    )
+  }
+
+  protected onViewMountedSync() {
+    console.log(
+      'View has been mounted. This function is called in the useLayoutEffect hook'
+    )
+  }
+
+  protected onViewUpdated() {
+    console.log(
+      'View has been updated. This function is called in the useEffect hook'
+    )
+  }
+
+  protected onViewUpdatedSync() {
+    console.log(
+      'View has been updated. This function is called in the useLayoutEffect hook'
+    )
+  }
+
+  protected onViewUnmounted() {
+    console.log(
+      'View has been unmounted. This function is called in the useEffect hook'
+    )
+  }
+
+  protected onViewUnmountedSync() {
+    console.log(
+      'View has been unmounted. This function is called in the useLayoutEffect hook'
+    )
+  }
+}
+```
+
+### Creating reactions
+
+To observe anything in a view model, you _should_ use ViewModel's `reaction`, `autorun` and `addDisposer` methods. These methods are added to automatically dispose reactions, when the view becomes unmounted. You can also not to use these methods, but in these case there can be a probability of a memory leak formation.
+
+```tsx
+import { intercept, makeObservable, observable, observe, when } from 'mobx'
+// [!code focus]
+import { ViewModel } from 'react-mvvm'
+
+// [!code focus]
+export class SomeViewModel extends ViewModel {
+  // [!code focus]
+  @observable field = 0
+
+  constructor() {
+    super()
+    makeObservable(this)
+
+    // [!code focus:5]
+    // If you want to create a reaction, please, use this.reaction instead of reaction from the mobx package
+    this.reaction(
+      () => this.field,
+      (value) => this.doSomething(value)
+    )
+
+    // [!code focus:4]
+    // If you want to create an autorun, please, use this.reaction instead of reaction from the mobx package
+    this.autorun(() => {
+      this.doSomething(this.field)
+    })
+
+    // [!code focus:2]
+    // In case you want to create other type of observation, such as observe, intercept or when, you can use
+    // this.addDisposer
+
+    // [!code focus:4]
+    // observe
+    this.addDisposer(
+      observe(this, 'field', ({ newValue }) => this.doSomething(newValue))
+    )
+
+    // [!code focus:7]
+    // intercept
+    this.addDisposer(
+      intercept(this, 'field', (change) => {
+        this.doSomething(change.newValue)
+        return change
+      })
+    )
+
+    // [!code focus:4]
+    // when
+    const w = when(() => this.field === 1)
+    w.then(() => this.doSomething(this.field))
+    this.addDisposer(() => w.cancel())
+  }
+
+  doSomething = (field: number) => {}
+}
+```
+
+## Configuration
+
+### Configuring `vmFactory`
+
+`vmFactory` tells to views how they should create an instance of a view model. You can configure this function to add debug information or a middleware.
+
+```tsx
+import { configure } from 'react-mvvm'
+
+configure({
+  vmFactory: (VM) => {
+    // By default, vmFactory returns new VM();
+
+    const viewModel = new VM()
+
+    // But you can do anything here
+    // Add debug information
+    console.log('view model created:', viewModel)
+
+    // Or process your view model somehow
+    ;(viewModel as any).__some_special_field = 'some special value'
+
+    // vmFactory must return an instance of a ViewModel
+    return viewModel
+  },
+})
+```
+
+### Configuring `Wrapper`
+
+The `Wrapper` is used to wrap all the views and childViews. By default, the `Wrapper` is equal to `React.Fragment` so it doesn't really affect on your application. But you can set any component as wrapper to add debug information or a middleware.
+
+```tsx
+// [!code focus]
+import { configure } from 'react-mvvm'
+import { Component, FC, ReactElement } from 'react'
+
+// [!code focus:3]
+// The Wrapper can be declared both with functional style or as class
+// It must have children as a prop, at it should return a children. Otherwise, your views will not be shown.
+const FunctionalWrapper: FC<{ children: ReactElement }> = ({ children }) => {
+  // You can add a debug info
+  console.log('view is rendered')
+
+  // [!code focus:2]
+  // You should return children
+  return children
+}
+
+// [!code focus:2]
+// You can also use class components
+class ClassWrapper extends Component<{ children: ReactElement }> {
+  render() {
+    // [!code focus:7]
+    // You should also return processed children
+    return (
+      <div>
+        <span>Wrapper content</span>
+        {this.props.children}
+      </div>
+    )
+  }
+}
+
+// [!code focus:3]
+configure({
+  Wrapper: FunctionalWrapper,
+})
+
+// [!code focus:3]
+configure({
+  Wrapper: ClassWrapper,
+})
+```
