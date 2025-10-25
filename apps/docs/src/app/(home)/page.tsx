@@ -2,7 +2,7 @@ import { Callout } from "fumadocs-ui/components/callout";
 import { Card, Cards } from "fumadocs-ui/components/card";
 import Image from "next/image";
 import Link from "next/link";
-import logo from "@/assets/logo.png";
+import logo from "@/assets/logo-main.png";
 import { CodeBlock } from "@/components/CodeBlock";
 import { Gradient } from "@/components/Gradient";
 
