@@ -1,15 +1,17 @@
 import { Callout } from "fumadocs-ui/components/callout";
 import { Card, Cards } from "fumadocs-ui/components/card";
-import { DynamicCodeBlock } from "fumadocs-ui/components/dynamic-codeblock";
-import { DocsBody } from "fumadocs-ui/page";
 import Image from "next/image";
 import Link from "next/link";
 import logo from "@/assets/logo.png";
+import { CodeBlock } from "@/components/CodeBlock";
 import { Gradient } from "@/components/Gradient";
 
-const separatedExample = `import { action, makeObservable, observable } from 'mobx';
+const separatedExample = `
+import { action, makeObservable, observable } from 'mobx';
+// [!code focus]
 import { view, ViewModel, configure } from 'react-mvvm';
 
+// [!code focus:7]
 configure({
   vmFactory: VM => {
     const viewModel = new VM();
@@ -18,31 +20,42 @@ configure({
   },
 });
 
+// [!code focus]
 class CounterViewModel extends ViewModel {
+  // [!code focus]
   @observable counter = 0;
 
+  // [!code focus:3]
   @action increase = () => {
     this.counter++;
   }
+// [!code focus]
 }
 
+// [!code focus]
 const Counter = view(CounterViewModel)(({ viewModel }) => (
   <div>
+    // [!code focus]
     <span>Counter: {viewModel.counter}</span>
+    // [!code focus]
     <button onClick={() => viewModel.increase()}>Update</button>
   </div>
 ))`;
 
 const contextExample = `
 import React, { FC } from 'react';
+// [!code focus]
 import { view, childView } from 'react-mvvm';
 import { SomeViewModel } from './path-to-view-model';
 
+// [!code focus]
 const SomeChildView = childView<SomeViewModel>()(({ viewModel }) => (
   <div>
+    // [!code focus:2]
     {/* You can use view models as context at any depth level inside a view */}
     <span>Counter: {viewModel.counter}</span>
 
+    // [!code focus:2]
     {/* You can also use view's props with a viewModel object, so there's no need to drill them */}
     <span>{viewModel.viewProps.prop1}</span>
   </div>
@@ -52,8 +65,10 @@ type Props = {
   prop1: number;
 };
 
+// [!code focus]
 const SomeView = view(SomeViewModel)<Props>(({ viewModel, prop1 }) => (
   <div>
+    // [!code focus:5]
     {/* You can use view models as context */}
     <span>Counter: {viewModel.counter}</span>
     <span>Sum: {viewModel.counter + prop1}</span>
@@ -62,31 +77,36 @@ const SomeView = view(SomeViewModel)<Props>(({ viewModel, prop1 }) => (
   </div>
 ))`;
 
-const hooksExample = `import { view, ViewModel } from 'react-mvvm';
+const hooksExample = `
+// [!code focus]
+import { view, ViewModel } from 'react-mvvm';
 import { AnyMemoizedComponent } from './AnyMemoizedComponent';
 
+// [!code focus]
 class SomeViewModel extends ViewModel {
-  // This function can be used instead of
-  //  useLayoutEffect(() => { ... }, []);
+  // [!code focus:3]
+  // Can be used instead of useLayoutEffect(() => { ... }, []);
   protected onViewMountedSync() { }
 
-  // This function can be used instead of
-  //  useEffect(() => { ... }, []);
+  // [!code focus:3]
+  // Can be used instead of useEffect(() => { ... }, []);
   protected onViewUnmounted() { }
 
-  // This function can be used partially instead of
-  //  useEffect(() => { ... });
+  // [!code focus:3]
+  // Can be used partially instead of useEffect(() => { ... });
   protected onViewUpdated() { }
 
+  // [!code focus:3]
   // Any function that created in a ViewModel is memoized,
-  //  so you don't need to use useMemo or useCallback
+  // so you don't need to use useMemo or useCallback
   handleClick = () => { ... };
 }
 
+// [!code focus]
 const SomeView = view(SomeViewModel)(({ viewModel }) => (
   <div>
+    // [!code focus:2]
     Thus, the view can start to consist exclusively of JSX code
-
     <AnyMemoizedComponent onClick={viewModel.handleClick} />
   </div>
 ));`;
@@ -198,7 +218,7 @@ export default function HomePage() {
                 Achieve perfect separation of concerns - keep your business
                 logic clean and your UI focused
               </h3>
-              <DynamicCodeBlock code={separatedExample} lang="tsx" />
+              <CodeBlock code={separatedExample} lang="tsx" />
             </div>
 
             <div className="space-y-4">
@@ -206,7 +226,7 @@ export default function HomePage() {
                 Replace complex Context API patterns with elegant, type-safe
                 view models
               </h3>
-              <DynamicCodeBlock code={contextExample} lang="tsx" />
+              <CodeBlock code={contextExample} lang="tsx" />
             </div>
 
             <div className="space-y-4">
@@ -214,7 +234,7 @@ export default function HomePage() {
                 Eliminate hook complexity and embrace declarative component
                 architecture
               </h3>
-              <DynamicCodeBlock code={hooksExample} lang="tsx" />
+              <CodeBlock code={hooksExample} lang="tsx" />
             </div>
           </div>
 

@@ -32,6 +32,9 @@ importers:
       '@shadergradient/react':
         specifier: ^2.3.6
         version: 2.3.6(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
+      '@shikijs/transformers':
+        specifier: ^3.13.0
+        version: 3.13.0
       class-variance-authority:
         specifier: ^0.7.1
         version: 0.7.1
