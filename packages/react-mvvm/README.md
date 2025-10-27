@@ -31,6 +31,12 @@ The documentation is divided into several sections:
 - [Core Concepts](https://beautyfree.github.io/react-mvvm/docs/core-concepts)
 - [Examples](https://beautyfree.github.io/react-mvvm/docs/examples)
 
+### Installation
+
+```bash
+npm install react-mvvm mobx mobx-react-lite reflect-metadata
+```
+
 ## Examples
 
 Here is a short example to get you started:

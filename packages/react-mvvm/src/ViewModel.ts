@@ -1,4 +1,4 @@
-import { type autorun, makeObservable, type reaction } from "mobx";
+import { type autorun, makeObservable, observable, type reaction } from "mobx";
 
 export type TDisposer = () => void;
 
@@ -37,8 +37,20 @@ export abstract class ViewModel<
     self.d = [];
     self[PARENT] = self[PARENT];
     self[VIEW_PROPS] = self[VIEW_PROPS];
-    // MobX 4 and MobX5 don't have makeObservable
-    makeObservable?.(self);
+
+    // MobX 6+ only: check number of parameters in function signature
+    // makeObservable has length === 1 in older versions (MobX 4/5 don't support annotations)
+    if (typeof makeObservable === "function" && makeObservable.length <= 1) {
+      // Old MobX versions (4/5) — safe to call directly
+      makeObservable(self);
+
+      // MobX 6+ with annotations — don't call here
+      // Subclasses will call makeObservable(this, {...}) themselves
+    } else {
+      makeObservable(self, {
+        [VIEW_PROPS]: observable.ref,
+      });
+    }
   }
 
   /**

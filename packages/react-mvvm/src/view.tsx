@@ -1,4 +1,5 @@
-import { action, autorun, observable, reaction } from "mobx";
+import { action, autorun, reaction } from "mobx";
+import { observer } from "mobx-react-lite";
 import {
   createContext,
   createElement,
@@ -14,38 +15,14 @@ import {
   useState,
 } from "react";
 import { configuration } from "./configure";
-import type { Constructable, ObserverFunction } from "./types";
+import type { Constructable } from "./types";
 import {
   ASSIGN,
-  OBJECT,
   PARENT,
   PROTOTYPE,
-  REFLECT,
   VIEW_PROPS,
   type ViewModel,
 } from "./ViewModel";
-
-// Dynamic mobx-react library import based on configuration
-export const getMobxReact = () => {
-  const libraryName = configuration.lite ? "mobx-react-lite" : "mobx-react";
-  try {
-    // eslint-disable-next-line @typescript-eslint/no-require-imports, @typescript-eslint/no-var-requires
-    return require(libraryName);
-  } catch {
-    throw new Error(
-      "Failed to import " +
-        libraryName +
-        ". Make sure you have installed the required package: npm install " +
-        libraryName
-    );
-  }
-};
-
-// Get observer function from the configured library
-const getObserver = (): ObserverFunction => {
-  const library = getMobxReact();
-  return library.observer;
-};
 
 declare const __DEV__: boolean;
 
@@ -67,13 +44,11 @@ const createComponent = <P, V, R>(
     viewModel = vmFactory(props);
 
     element = createElement(
-      // eslint-disable-next-line react-hooks/rules-of-hooks
       useState(() => {
         if (options.observer === false) {
           return component;
         }
-        const observer = getObserver();
-        return observer(component as any);
+        return observer(component);
       })[0],
       ASSIGN({}, props, {
         viewModel,
@@ -243,11 +218,11 @@ for (const [f, name] of [
   };
 }
 
-REFLECT.decorate(
-  [observable.ref, REFLECT.metadata("design:type", OBJECT)],
-  PROTOTYPE,
-  VIEW_PROPS
-);
+// REFLECT.decorate(
+//   [observable.ref, REFLECT.metadata("design:type", OBJECT)],
+//   PROTOTYPE,
+//   VIEW_PROPS
+// );
 
 /**
  * A class with which you can create a ChildView. The context of this class is equals to a view model. And also
