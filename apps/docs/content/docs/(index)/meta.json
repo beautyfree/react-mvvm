@@ -7,6 +7,6 @@
     "core-concepts",
     "examples",
     "---LLM---",
-    "[llms-full.txt](/llms-full.txt)"
+    "external:[llms-full.txt](/react-mvvm/llms-full.txt)"
   ]
 }
