@@ -25,7 +25,7 @@ icon: History
     const View: FC<Props> = view(SomeViewModel)(() => (
       <div />
     ));
-    
+
     // After
     const View = view(SomeViewModel)<Props>(() => (
       <div />
@@ -43,7 +43,7 @@ icon: History
     const View: ViewWithRef<HTMLDivElement, Props> = view(SomeViewModel)(() => (
       forwardRef(() => <div />)
     ));
-    
+
     // After
     const View = view(SomeViewModel)<Props, HTMLDivElement>(() => (
       forwardRef(() => <div />)
